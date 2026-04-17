@@ -1,0 +1,6 @@
+database:
+  url: "${DATABASE_URL}"
+migration:
+  dir: "migrations"
+http:
+  addr: ":8080"

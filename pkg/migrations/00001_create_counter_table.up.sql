@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS counter (
+    id    INTEGER PRIMARY KEY CHECK (id = 1),
+    value BIGINT NOT NULL DEFAULT 0
+);

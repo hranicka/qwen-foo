@@ -1,0 +1,27 @@
+openapi: "3.0.3"
+info:
+  title: Hello API
+  version: "1.0.0"
+  description: A simple hello API with request counter
+
+paths:
+  /hello:
+    get:
+      summary: Returns a hello message
+      operationId: getHello
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  counter:
+                    type: integer
+                    format: int64
+                required:
+                  - message
+                  - counter
