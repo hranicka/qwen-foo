@@ -12,16 +12,13 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func dsn(dbName string, cfg *config.Database) string {
-	if cfg.URL != "" {
-		u, err := url.Parse(cfg.URL)
-		if err != nil {
-			return fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable", cfg.User, cfg.Password, cfg.Host, dbName)
-		}
-		u.Path = "/" + dbName
-		return u.String()
+func dsn(dbName string, dbURL string) string {
+	u, err := url.Parse(dbURL)
+	if err != nil {
+		return dbURL
 	}
-	return fmt.Sprintf("postgres://%s:%s@%s/%s?sslmode=disable", cfg.User, cfg.Password, cfg.Host, dbName)
+	u.Path = "/" + dbName
+	return u.String()
 }
 
 func newTestDB(t *testing.T) (pool *pgxpool.Pool, cleanup func()) {
@@ -35,7 +32,7 @@ func newTestDB(t *testing.T) (pool *pgxpool.Pool, cleanup func()) {
 	suffix := fmt.Sprintf("%06x", rand.Uint32()%1000000)
 	dbName := "test_" + suffix
 
-	adminDSN := dsn("template1", &cfg.Database)
+	adminDSN := dsn("template1", cfg.Database.URL)
 	admin, err := sql.Open("pgx", adminDSN)
 	if err != nil {
 		t.Fatalf("connect admin: %v", err)
@@ -52,7 +49,7 @@ func newTestDB(t *testing.T) (pool *pgxpool.Pool, cleanup func()) {
 	}
 
 	ctx := context.Background()
-	testDSN := dsn(dbName, &cfg.Database)
+	testDSN := dsn(dbName, cfg.Database.URL)
 	pool, err = pgxpool.New(ctx, testDSN)
 	if err != nil {
 		t.Fatalf("create pool: %v", err)

@@ -27,7 +27,7 @@ func TestMain(m *testing.M) {
 		log.Fatalf("load config: %v", err)
 	}
 
-	adminDSN := dsn("template1", &cfg.Database)
+	adminDSN := dsn("template1", cfg.Database.URL)
 	adminDB, err := sql.Open("pgx", adminDSN)
 	if err != nil {
 		log.Fatalf("connect to postgres: %v", err)
@@ -39,7 +39,7 @@ func TestMain(m *testing.M) {
 	adminDB.Exec("CREATE DATABASE test_template")
 
 	// Apply migrations to template
-	migDSN := dsn("test_template", &cfg.Database)
+	migDSN := dsn("test_template", cfg.Database.URL)
 	migDB, err := sql.Open("pgx", migDSN)
 	if err != nil {
 		log.Fatalf("connect template: %v", err)
